@@ -1,0 +1,22 @@
+easy_admin:
+  entities:
+    Admin:
+      class: App\Entity\Admin
+      label:
+    Applicant:
+      class: App\Entity\Applicant
+    Job:
+      class: App\Entity\Job
+    Type:
+      class: App\Entity\Type
+    Entreprise:
+      class: App\Entity\Entreprise
+
+  site_name: "MFALL LIMITED"
+  design:
+    menu:
+      - { entity: "Admin", icon: "user" }
+      - { entity: "Applicant", icon: "user", label: "Applicants" }
+      - { entity: "Entreprise", icon: "building", label: "Entreprises" }
+      - { entity: "Type", icon: "tag", label: "Types" }
+      - { entity: "Job", icon: "address-card", label: "Jobs" }
