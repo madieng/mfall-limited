@@ -2,10 +2,14 @@
 
 namespace App\Entity;
 
+use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JobRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Job
 {
@@ -37,9 +41,46 @@ class Job
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise", inversedBy="jobs")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="jobs")
      */
-    private $entreprise;
+    private $company;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $location;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $content;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Applicant", mappedBy="job")
+     */
+    private $applicants;
+
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());
+        $this->applicants = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initSlug()
+    {
+        if (empty($this->slug)) {
+            $slugify = new Slugify();
+            $this->setSlug($slugify->slugify($this->title));
+        }
+    }
 
     public function getId(): ?int
     {
@@ -94,14 +135,86 @@ class Job
         return $this;
     }
 
-    public function getEntreprise(): ?Entreprise
+    public function getCompany(): ?Company
     {
-        return $this->entreprise;
+        return $this->company;
     }
 
-    public function setEntreprise(?Entreprise $entreprise): self
+    public function setCompany(?Company $company): self
     {
-        $this->entreprise = $entreprise;
+        $this->company = $company;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Applicant[]
+     */
+    public function getApplicants(): Collection
+    {
+        return $this->applicants;
+    }
+
+    public function addApplicant(Applicant $applicant): self
+    {
+        if (!$this->applicants->contains($applicant)) {
+            $this->applicants[] = $applicant;
+            $applicant->setJob($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApplicant(Applicant $applicant): self
+    {
+        if ($this->applicants->contains($applicant)) {
+            $this->applicants->removeElement($applicant);
+            // set the owning side to null (unless already changed)
+            if ($applicant->getJob() === $this) {
+                $applicant->setJob(null);
+            }
+        }
 
         return $this;
     }

@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\EntrepriseRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\CompanyRepository")
  */
-class Entreprise
+class Company
 {
     /**
      * @ORM\Id()
@@ -39,7 +39,7 @@ class Entreprise
     private $phone;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Job", mappedBy="entreprise")
+     * @ORM\OneToMany(targetEntity="App\Entity\Job", mappedBy="company")
      */
     private $jobs;
 
@@ -113,7 +113,7 @@ class Entreprise
     {
         if (!$this->jobs->contains($job)) {
             $this->jobs[] = $job;
-            $job->setEntreprise($this);
+            $job->setCompany($this);
         }
 
         return $this;
@@ -124,8 +124,8 @@ class Entreprise
         if ($this->jobs->contains($job)) {
             $this->jobs->removeElement($job);
             // set the owning side to null (unless already changed)
-            if ($job->getEntreprise() === $this) {
-                $job->setEntreprise(null);
+            if ($job->getCompany() === $this) {
+                $job->setCompany(null);
             }
         }
 

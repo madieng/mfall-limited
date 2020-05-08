@@ -50,6 +50,11 @@ class Applicant extends User
      */
     private $type;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Job", inversedBy="applicants")
+     */
+    private $job;
+
     public function getResume(): ?string
     {
         return $this->resume;
@@ -126,5 +131,17 @@ class Applicant extends User
     public function getResumeFile()
     {
         return $this->resumeFile;
+    }
+
+    public function getJob(): ?Job
+    {
+        return $this->job;
+    }
+
+    public function setJob(?Job $job): self
+    {
+        $this->job = $job;
+
+        return $this;
     }
 }

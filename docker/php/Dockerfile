@@ -9,12 +9,12 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"\
 
 # PACKAGES
 
-RUN apt-get update && apt-get install -y zlib1g-dev libicu-dev g++ wget curl git zip unzip
+RUN apt-get update && apt-get install -y zlib1g-dev libicu-dev g++ wget curl git libzip-dev zip unzip
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install intl
 
 # PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql opcache
+RUN docker-php-ext-install pdo pdo_mysql opcache zip
 ADD config/php/php.ini /usr/local/etc/php/conf.d/php.ini
 
 # Apache
